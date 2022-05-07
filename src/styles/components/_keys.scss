@@ -1,0 +1,128 @@
+@import "../abctract/constant";
+
+.key {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 1px solid darken($color-basic, 4%);
+  box-shadow: 0 2px 0 darken($color-basic, 5%), 2px 4px 6px darken($color-basic, 2%);
+  margin: 4px;
+  background-color: $color-basic;
+  color: $color-meta;
+  transition: all 150ms linear;
+  cursor: pointer;
+  user-select: none;
+  @include font(normal, 400, 20px, 110%, 0.06em);
+
+  &.active {
+    background: darken($color-basic, 1.5%);
+    border: 1px solid rgba(#000, .05);
+    box-shadow: 1px 1px 2px rgba(#fff, .2);
+    color: lighten($color-meta, 18%);
+    text-shadow: -1px -1px 0 darken($color-basic, 9.5%);
+  }
+
+  &_meta {
+    color: $color-basic;
+    background-color: $color-meta;
+    border: 1px solid darken($color-meta, 4%);
+    box-shadow: 0 2px 0 darken($color-meta, 5%), 2px 4px 6px darken($color-meta, 2%);
+
+    &.active {
+      background: darken($color-meta, 1.5%);
+      color: lighten($color-basic, 18%);
+      text-shadow: -1px -1px 0 darken($color-meta, 9.5%);
+    }
+  }
+
+  &_additional {
+    background-color: $color-additional;
+    border: 1px solid darken($color-additional, 4%);
+    box-shadow: 0 2px 0 darken($color-additional, 5%), 2px 4px 6px darken($color-additional, 2%);
+
+    &.active {
+      background: darken($color-additional, 1.5%);
+      text-shadow: -1px -1px 0 darken($color-additional, 9.5%);
+    }
+  }
+
+  &_tab {
+    width: 90px;
+  }
+
+  &_backspace {
+    width: 140px;
+  }
+
+  &_delete {
+    width: 65px;
+    font-size: 17px;
+  }
+
+  &_capslock {
+    width: 116px;
+    font-size: 17px;
+
+    &:before {
+      content: '';
+      top: 0;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      background: $color-basic;
+      border-radius: 50%;
+      margin-right: 3px;
+      margin-bottom: 26px;
+    }
+
+    .capslock-true & {
+      background: darken($color-meta, 1.5%);
+      color: lighten($color-basic, 18%);
+      text-shadow: -1px -1px 0 darken($color-meta, 9.5%);
+
+      &:before {
+        background: $color-additional;
+      }
+    }
+  }
+
+  &_enter {
+    width: 160px;
+  }
+
+  &_shift-right {
+    width: 55px;
+  }
+
+  &_shift-left {
+    width: 183px;
+  }
+
+  &_ctrl {
+    width: 114px;
+  }
+
+  &_space {
+    width: 333px;
+  }
+}
+
+.capslock-true .item {
+  display: none;
+}
+
+.capslock-false .item_up {
+  display: none;
+}
+
+.english .ruKey {
+  display: none;
+}
+
+.russian .engKey {
+  display: none;
+}
+

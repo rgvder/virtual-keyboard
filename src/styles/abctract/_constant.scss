@@ -1,0 +1,13 @@
+$font-family-basic: Arial, sans-serif;
+
+$color-basic: #2A8286;
+$color-meta: #E5E1DE;
+$color-additional: #B03231;
+
+@mixin font($style, $weight, $size, $height, $spacing) {
+  font-style: $style;
+  font-weight: $weight;
+  font-size: $size;
+  line-height: $height;
+  letter-spacing: $spacing;
+}

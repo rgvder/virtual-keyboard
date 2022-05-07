@@ -1,0 +1,35 @@
+@import "../abctract/constant";
+
+.keyboard {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 1035px;
+  margin: 0 auto;
+
+  &__wrapper {
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 1035px;
+}
+
+  &__textarea {
+    resize: none;
+    margin-bottom: 20px;
+    padding: 15px;
+    height: 350px;
+    width: 1005px;
+    border-radius: 4px;
+    background-color: $color-meta;
+    border: 1px solid darken($color-meta, 4%);
+    box-shadow: 0 2px 0 darken($color-meta, 5%), 2px 4px 6px darken($color-meta, 2%);
+    color: black;
+    outline : none;
+    overflow : auto;
+    @include font(normal, 400, 30px, 110%, 0.06em);
+  }
+}
