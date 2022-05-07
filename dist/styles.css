@@ -412,7 +412,19 @@ ul li {
 .capslock-true .item {
   display: none; }
 
+.capslock-true.shift-true .item {
+  display: inline; }
+
+.capslock-true.shift-true .item_up {
+  display: none; }
+
 .capslock-false .item_up {
+  display: none; }
+
+.capslock-false.shift-true .item_up {
+  display: inline; }
+
+.capslock-false.shift-true .item {
   display: none; }
 
 .english .ruKey {

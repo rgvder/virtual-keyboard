@@ -1,13 +1,7 @@
 import { metaWhich } from './key-map-entries';
 
 export default class Key {
-  isActive = false;
-
-  htmlElement;
-
-  callback;
-
-  constructor(config, callback) {
+  constructor(config, callbackDown, callbackUp) {
     const {
       key, ruKey, otherKey, otherRuKey, code, which, shiftKey, location, styles,
     } = config;
@@ -23,7 +17,8 @@ export default class Key {
     this.config = config;
 
     this.htmlElement = this.getElement();
-    this.callback = callback;
+    this.callbackDown = callbackDown;
+    this.callbackUp = callbackUp;
 
     this.addListeners();
   }
@@ -59,18 +54,22 @@ export default class Key {
 
       this.htmlElement.classList.add('active');
 
-      this.callback({
+      this.callbackDown({
         ...this.config, ctrlKey: event.ctrlKey, altKey: event.altKey, shiftKey: event.shiftKey,
       });
     });
 
-    document.addEventListener('keyup', () => {
+    document.addEventListener('keyup', (event) => {
       this.htmlElement.classList.remove('active');
+
+      this.callbackUp({
+        ...this.config, ctrlKey: event.ctrlKey, altKey: event.altKey, shiftKey: event.shiftKey,
+      });
     });
 
     this.htmlElement.addEventListener('mousedown', () => {
       this.htmlElement.classList.add('active');
-      this.callback(this.config);
+      this.callbackDown(this.config);
     });
 
     this.htmlElement.addEventListener('mouseup', () => {

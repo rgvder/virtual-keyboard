@@ -110,12 +110,35 @@
   }
 }
 
-.capslock-true .item {
-  display: none;
+.capslock-true {
+  .item {
+    display: none;
+  }
+
+  &.shift-true {
+    .item {
+      display: inline;
+    }
+    .item_up {
+      display: none;
+    }
+  }
 }
 
-.capslock-false .item_up {
-  display: none;
+.capslock-false {
+  .item_up {
+    display: none;
+  }
+
+  &.shift-true {
+    .item_up {
+      display: inline;
+    }
+
+    .item {
+      display: none;
+    }
+  }
 }
 
 .english .ruKey {

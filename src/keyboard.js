@@ -8,6 +8,10 @@ export default class Keyboard {
 
   isShift = false;
 
+  isCtrl = false;
+
+  isAlt = false;
+
   constructor() {
     this.keyboardElement = document.createElement('div');
     this.keyboardElement.classList.add('keyboard', 'english', 'capslock-false');
@@ -26,7 +30,7 @@ export default class Keyboard {
     const wrapper = document.createElement('div');
     wrapper.classList.add('keyboard__wrapper');
     this.keyMap.forEach((config) => {
-      const key = new Key(config, this.keyDown.bind(this));
+      const key = new Key(config, this.keyDown.bind(this), this.keyUp.bind(this));
       wrapper.append(key.htmlElement);
     });
     this.keyboardElement.append(wrapper);
@@ -36,10 +40,26 @@ export default class Keyboard {
     this.keyboardElement.prepend(this.textarea);
   }
 
+  keyUp(config) {
+    if (config.which === 16 || !config.shiftKey) {
+      this.isShift = false;
+      this.keyboardElement.classList.remove('shift-true');
+      return;
+    }
+
+    if (config.which === 17) {
+      this.isCtrl = false;
+      return;
+    }
+
+    if (config.which === 18) {
+      this.isAlt = false;
+    }
+  }
+
   keyDown(config) {
-    // document.dispatchEvent(
-    //   new KeyboardEvent('keydown', config),
-    // );
+    let text;
+
     if (config.which === 20) {
       this.isCapslock = !this.isCapslock;
       this.keyboardElement.classList.toggle('capslock-true', this.isCapslock);
@@ -48,22 +68,31 @@ export default class Keyboard {
     }
 
     if (config.which === 13) {
-      this.textarea.value += '\n';
+      text = '\n';
       return;
     }
 
     if (config.which === 9) {
-      this.textarea.value += '\t';
+      text = '\t';
       return;
     }
 
     if (config.which === 16) {
-      this.isShift = config.shiftKey;
+      this.isShift = true;
+      this.keyboardElement.classList.add('shift-true');
       return;
     }
 
+    if (config.which === 17) {
+      this.isCtrl = true;
+    }
+
+    if (config.which === 18) {
+      this.isAlt = true;
+    }
+
     if (config.which === 17 || config.which === 18) {
-      if (config.altKey && config.ctrlKey) {
+      if (this.isAlt && this.isCtrl) {
         this.isEnglish = !this.isEnglish;
         this.keyboardElement.classList.toggle('russian', !this.isEnglish);
         this.keyboardElement.classList.toggle('english', this.isEnglish);
@@ -76,15 +105,13 @@ export default class Keyboard {
       end: this.textarea.selectionEnd,
     };
 
-    let text;
-
     if (this.isEnglish) {
-      if (this.isCapslock) {
+      if (this.isCapslock !== this.isShift) {
         text = this.textProcessor(config.otherKey);
       } else {
         text = this.textProcessor(config.key);
       }
-    } else if (this.isCapslock) {
+    } else if (this.isCapslock !== this.isShift) {
       text = this.textProcessor(config.otherRuKey);
     } else {
       text = this.textProcessor(config.ruKey);
