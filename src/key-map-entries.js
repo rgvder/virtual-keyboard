@@ -310,7 +310,7 @@ export const keyMapEntries = [
       location: 0,
       ruKey: 'х',
       otherKey: '{',
-      otherRuKey: '[',
+      otherRuKey: 'Х',
     },
   ],
   [
@@ -320,7 +320,7 @@ export const keyMapEntries = [
       code: 'BracketRight',
       which: 221,
       location: 0,
-      ruKey: ']',
+      ruKey: 'ъ',
       otherKey: '}',
       otherRuKey: 'Ъ',
     },
