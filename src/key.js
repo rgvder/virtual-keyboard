@@ -1,5 +1,3 @@
-import { metaWhich } from './key-map-entries';
-
 export default class Key {
   constructor(config, callbackDown, callbackUp) {
     const {

@@ -2,19 +2,21 @@ import Key from './key';
 import { keyMapEntries } from './key-map-entries';
 
 export default class Keyboard {
-  isCapslock = false;
-
-  isEnglish = true;
-
-  isShift = false;
-
-  isCtrl = false;
-
-  isAlt = false;
-
   constructor() {
+    this.isCapslock = false;
+
+    const savedLanguage = localStorage.getItem('savedLanguage') === 'true';
+    this.isEnglish = savedLanguage ?? true;
+
+    this.isShift = false;
+
+    this.isCtrl = false;
+
+    this.isAlt = false;
+
     this.keyboardElement = document.createElement('div');
-    this.keyboardElement.classList.add('keyboard', 'english', 'capslock-false');
+    this.keyboardElement.classList.add('keyboard', 'capslock-false');
+    this.keyboardElement.classList.add(this.isEnglish ? 'english' : 'russian');
     document.body.append(this.keyboardElement);
 
     this.spanElement = document.querySelector('.key__item');
@@ -38,6 +40,19 @@ export default class Keyboard {
     this.textarea = document.createElement('textarea');
     this.textarea.classList.add('keyboard__textarea');
     this.keyboardElement.prepend(this.textarea);
+
+    this.textarea.addEventListener('focus', () => {
+      setTimeout(() => {
+        this.textarea.selectionStart = this.textSelection.start;
+        this.textarea.selectionEnd = this.textSelection.end;
+      }, 0);
+    });
+
+    const info = document.createElement('div');
+    info.classList.add('keyboard__info');
+    this.keyboardElement.append(info);
+    info.innerHTML = `<p>Операционная система Windows</p>
+        <p>Комбинация для переключения языка: <span>CTRL</span> + <span>ALT</span> </p>`;
   }
 
   keyUp(config) {
@@ -68,13 +83,11 @@ export default class Keyboard {
     }
 
     if (config.which === 13) {
-      text = '\n';
-      return;
+      text = this.textProcessor('\n');
     }
 
     if (config.which === 9) {
-      text = '\t';
-      return;
+      text = this.textProcessor('\t');
     }
 
     if (config.which === 16) {
@@ -91,32 +104,44 @@ export default class Keyboard {
       this.isAlt = true;
     }
 
+    if (config.which === 91) {
+      return;
+    }
+
     if (config.which === 17 || config.which === 18) {
       if (this.isAlt && this.isCtrl) {
         this.isEnglish = !this.isEnglish;
         this.keyboardElement.classList.toggle('russian', !this.isEnglish);
         this.keyboardElement.classList.toggle('english', this.isEnglish);
+        localStorage.setItem('savedLanguage', this.isEnglish);
       }
       return;
     }
 
-    this.textSelection = {
-      start: this.textarea.selectionStart,
-      end: this.textarea.selectionEnd,
-    };
-
-    if (this.isEnglish) {
-      if (this.isCapslock !== this.isShift) {
-        text = this.textProcessor(config.otherKey);
-      } else {
-        text = this.textProcessor(config.key);
-      }
-    } else if (this.isCapslock !== this.isShift) {
-      text = this.textProcessor(config.otherRuKey);
-    } else {
-      text = this.textProcessor(config.ruKey);
+    if (document.activeElement.tagName === 'TEXTAREA' && config.which !== 13 && config.which !== 9) {
+      this.textSelection = {
+        start: this.textarea.selectionStart,
+        end: this.textarea.selectionEnd,
+      };
     }
+
+    if (!text) {
+      if (this.isEnglish) {
+        if (this.isCapslock !== this.isShift) {
+          text = this.textProcessor(config.otherKey);
+        } else {
+          text = this.textProcessor(config.key);
+        }
+      } else if (this.isCapslock !== this.isShift) {
+        text = this.textProcessor(config.otherRuKey);
+      } else {
+        text = this.textProcessor(config.ruKey);
+      }
+    }
+
     this.textarea.value = text;
+    this.textarea.selectionStart = this.textSelection.start;
+    this.textarea.selectionEnd = this.textSelection.end;
   }
 
   textProcessor(symbol) {
@@ -124,29 +149,35 @@ export default class Keyboard {
     const str = this.textarea.value;
     const { start, end } = this.textSelection;
 
-    console.log(str.length, start, end);
-
-    if (str.length + 1 === start) {
-      result = str + symbol;
-      this.textarea.selectionStart = start + 1;
-    } else if (symbol === 'Backspace') {
-      if (!end || end === start) {
+    if (symbol === 'BACKSPACE') {
+      if (!end && start === 0) {
+        result = str;
+      } else if (!end || end === start) {
         result = str.slice(0, start - 1) + str.slice(start);
-        this.textarea.selectionStart = start - 1;
+        this.textSelection.start = start - 1;
       } else {
         result = str.slice(0, start) + str.slice(end);
-        this.textarea.selectionStart = start;
+        this.textSelection.start = start;
       }
-    } else if (symbol === 'Delete') {
-      if (end === start) {
+    } else if (symbol === 'DEL') {
+      if (start === str.length + 1) {
+        result = str;
+      } else if (!end || end === start) {
         result = str.slice(0, start) + str.slice(end + 1);
-        this.textarea.selectionStart = start;
+        this.textSelection.start = start;
+      } else {
+        result = str.slice(0, start) + str.slice(end);
+        this.textSelection.start = start;
       }
+    } else if (symbol === '\t' || symbol === '\n') {
+      result = str.slice(0, start) + symbol + str.slice(end ?? start);
+      this.textSelection.start = start + 2;
     } else {
       result = str.slice(0, start) + symbol + str.slice(end ?? start);
-      this.textarea.selectionStart = start + 1;
+      this.textSelection.start = start + 1;
     }
-    this.textarea.selectionEnd = this.textarea.selectionStart;
+    this.textSelection.end = this.textSelection.start;
+
     return result;
   }
 }
