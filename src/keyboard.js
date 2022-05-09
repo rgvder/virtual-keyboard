@@ -56,10 +56,15 @@ export default class Keyboard {
   }
 
   keyUp(config) {
-    if (config.which === 16 || !config.shiftKey) {
+    if (config.which === 16) {
       this.isShift = false;
       this.keyboardElement.classList.remove('shift-true');
       return;
+    }
+
+    if (!config.shiftKey) {
+      this.isShift = false;
+      this.keyboardElement.classList.remove('shift-true');
     }
 
     if (config.which === 17) {
